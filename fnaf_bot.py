@@ -338,13 +338,18 @@ def office_loop():
 
         if time.time() - night_start > 550:
             pyautogui.moveTo(game_width / 2, game_height / 2)
-            wait_until_pixel_matches("night_started", "night_started", tolerance = 2)
-            office_loop()
+            if wait_until_pixel_matches("night_started", "night_started", tolerance = 2, max_duration=30):
+                office_loop()
             break
 
-def wait_until_pixel_matches(position_name, pixel_name, delay = 0.1, tolerance = 0):
+def wait_until_pixel_matches(position_name, pixel_name, delay = 0.1, tolerance = 0, max_duration = 1000000):
+    duration = 0
     while not pyautogui.pixelMatchesColor(*mouse_positions[position_name], pixel_colors[pixel_name], tolerance = tolerance):
         time.sleep(delay)
+        duration += delay
+        if duration > max_duration:
+            return 0
+    return 1
     
 
 wait_until_pixel_matches("game_opened", "game_opened")
